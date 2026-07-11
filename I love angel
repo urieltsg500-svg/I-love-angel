@@ -301,12 +301,13 @@ end)
 
 local Tabs = {
 	Main = Window:AddTab("Main", "info"),
-	Player = Window:AddTab("Player", "home"),
+	Player = Window:AddTab("Player", "torch"),
 	Combat = Window:AddTab("Combat", "sword"),
 	Movement = Window:AddTab("Movement", "move"),
 	Farming = Window:AddTab("Farming", "pickaxe"),
 	Teleport = Window:AddTab("Teleport", "map-pin"),
 	Visuals = Window:AddTab("Visuals", "eye"),
+	["Boss Farm"] = Window:AddTab("Boss Farm", "skull"),
 	["Fun Box"] = Window:AddTab("Fun Box", "gamepad"),
 	["UI Settings"] = Window:AddTab("UI Settings", "settings"),
 }
@@ -1683,7 +1684,7 @@ Toggles.AutoSwing:OnChanged(function()
 	if Toggles.AutoSwing.Value then
 		_G.T = true
 		track("AutoSwing", RunService.Heartbeat:Connect(function()
-			if _G.T and tick() - lastAutoSwing >= 0.2 then
+			if _G.T and tick() - lastAutoSwing >= 0.1 then
 				local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
 				if tool then
 					tool:Activate()
@@ -3502,6 +3503,98 @@ Toggles.InfiniteZoom:OnChanged(function()
 end)
 
 -- ==========================================
+-- BOSS FARM
+-- ==========================================
+local BossFarmLeft = Tabs["Boss Farm"]:AddLeftGroupbox("Boss Farm", "skull")
+local BossFarmRight = Tabs["Boss Farm"]:AddRightGroupbox("Settings", "sliders-horizontal")
+local BossFarmTools = Tabs["Boss Farm"]:AddRightGroupbox("Tools", "wrench")
+
+BossFarmLeft:AddToggle("AdamantiteFarmToggle", {
+	Text = "Adamantite Farm",
+	Default = false,
+})
+
+-- Adamantite Farm variables
+local adamantiteScreenGui = nil
+local adamantiteHeartbeatConn = nil
+
+Toggles.AdamantiteFarmToggle:OnChanged(function()
+	disconnect("AdamantiteFarm")
+	if Toggles.AdamantiteFarmToggle.Value then
+		local Players = game:GetService("Players")
+		local LocalPlayer = Players.LocalPlayer
+		local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+		local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
+
+		local locations = {
+			Vector3.new(-1670.36572265625, 520.3575439453125, 7286.283203125),
+			Vector3.new(-1734.2337646484375, 529.2215576171875, 7296.73388671875),
+			Vector3.new(-1705.7255859375, 520.3575439453125, 7342.8310546875),
+			Vector3.new(-1792.862548828125, 519.5882568359375, 7286.28271484375),
+			Vector3.new(-1757.49462890625, 519.5882568359375, 7237.10498046875)
+		}
+
+		local currentLocationIndex = 1
+		local stayAtLocation = false
+
+		adamantiteScreenGui = Instance.new("ScreenGui")
+		adamantiteScreenGui.Name = "AdamantiteFarmGui"
+		adamantiteScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+		local AutoSamuraiButton = Instance.new("TextButton")
+		AutoSamuraiButton.Name = "AutoSamuraiButton"
+		AutoSamuraiButton.Size = UDim2.new(0, 200, 0, 50)
+		AutoSamuraiButton.Position = UDim2.new(0.5, -250, 0.75, 0)
+		AutoSamuraiButton.Text = "Auto Samurai"
+		AutoSamuraiButton.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
+		AutoSamuraiButton.TextColor3 = Color3.new(1, 1, 1)
+		AutoSamuraiButton.Font = Enum.Font.SourceSansBold
+		AutoSamuraiButton.TextSize = 20
+		AutoSamuraiButton.Parent = adamantiteScreenGui
+
+		local StopButton = Instance.new("TextButton")
+		StopButton.Name = "StopButton"
+		StopButton.Size = UDim2.new(0, 200, 0, 50)
+		StopButton.Position = UDim2.new(0.5, -250, 0.85, 0)
+		StopButton.Text = "Stop"
+		StopButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+		StopButton.TextColor3 = Color3.new(1, 1, 1)
+		StopButton.Font = Enum.Font.SourceSansBold
+		StopButton.TextSize = 20
+		StopButton.Parent = adamantiteScreenGui
+
+		track("AdamantiteFarm", AutoSamuraiButton.MouseButton1Click:Connect(function()
+			currentLocationIndex = currentLocationIndex + 1
+			if currentLocationIndex > #locations then
+				currentLocationIndex = 1
+			end
+
+			if HumanoidRootPart then
+				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
+				stayAtLocation = true
+			end
+		end))
+
+		track("AdamantiteFarm", StopButton.MouseButton1Click:Connect(function()
+			stayAtLocation = false
+			currentLocationIndex = 1
+		end))
+
+		adamantiteHeartbeatConn = RunService.Heartbeat:Connect(function()
+			if stayAtLocation and HumanoidRootPart then
+				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
+			end
+		end)
+		track("AdamantiteFarm", adamantiteHeartbeatConn)
+	else
+		if adamantiteScreenGui then
+			adamantiteScreenGui:Destroy()
+			adamantiteScreenGui = nil
+		end
+	end
+end)
+
+-- ==========================================
 -- FUN BOX
 -- ==========================================
 local FunLeft = Tabs["Fun Box"]:AddLeftGroupbox("FLING", "swords")
@@ -4245,6 +4338,9 @@ Library:OnUnload(function()
 	end
 	if Toggles.DisableShadows and Toggles.DisableShadows.Value then
 		Toggles.DisableShadows:SetValue(false)
+	end
+	if Toggles.AdamantiteFarmToggle and Toggles.AdamantiteFarmToggle.Value then
+		Toggles.AdamantiteFarmToggle:SetValue(false)
 	end
 	if Toggles.UltraFPSBoost and Toggles.UltraFPSBoost.Value then
 		Toggles.UltraFPSBoost:SetValue(false)
