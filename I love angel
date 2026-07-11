@@ -1016,7 +1016,7 @@ Toggles.NoBossDamage:OnChanged(noBossDamageToggle)
 local droppedItemSpawnTimes = {}
 local lastAutoPickup = 0
 local AUTO_PICKUP_RANGE = 20
-local AUTO_PICKUP_COOLDOWN = 0.25
+local AUTO_PICKUP_COOLDOWN = 0
 
 local function trackDroppedItem(item)
 	if not item:IsA("BasePart") then
@@ -1677,18 +1677,13 @@ Toggles.KillAura:OnChanged(function()
 	end
 end)
 
-local lastAutoSwing = 0
 Toggles.AutoSwing:OnChanged(function()
 	disconnect("AutoSwing")
 	if Toggles.AutoSwing.Value then
 		_G.T = true
-		track("AutoSwing", RunService.Heartbeat:Connect(function()
-			if _G.T and tick() - lastAutoSwing >= 0.25 then -- 0.25 second cooldown to prevent lag
-				local tool = LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool")
-				if tool then
-					tool:Activate()
-					lastAutoSwing = tick()
-				end
+		track("AutoSwing", RunService.RenderStepped:Connect(function()
+			if _G.T and LocalPlayer.Character and LocalPlayer.Character:FindFirstChildOfClass("Tool") then
+				LocalPlayer.Character:FindFirstChildOfClass("Tool"):Activate()
 			end
 		end))
 	else
@@ -2540,9 +2535,7 @@ local function mineObject(obj)
 	end
 end
 
-local lastAutoMine = 0
 local function autoMine()
-	if tick() - lastAutoMine < 0.25 then return end -- 0.25 second cooldown
 	local root = getRootPart()
 	if not root then return end
 	local folder = workspace:FindFirstChild("worldResources") and workspace.worldResources:FindFirstChild("mineable")
@@ -2560,12 +2553,7 @@ local function autoMine()
 			end
 		end
 	end
-	if closest then
-		mineObject(closest)
-		lastAutoMine = tick()
-	else
-		updateHighlight(hlMine, nil, false)
-	end
+	if closest then mineObject(closest) else updateHighlight(hlMine, nil, false) end
 end
 
 Toggles.AutoMine:OnChanged(function()
@@ -2601,9 +2589,7 @@ local function chopObject(obj)
 	end
 end
 
-local lastAutoChop = 0
 local function autoChop()
-	if tick() - lastAutoChop < 0.25 then return end -- 0.25 second cooldown
 	local root = getRootPart()
 	if not root then return end
 	local folder = workspace:FindFirstChild("worldResources") and workspace.worldResources:FindFirstChild("choppable")
@@ -2622,12 +2608,7 @@ local function autoChop()
 			end
 		end
 	end
-	if closest then
-		chopObject(closest)
-		lastAutoChop = tick()
-	else
-		updateHighlight(hlChop, nil, false)
-	end
+	if closest then chopObject(closest) else updateHighlight(hlChop, nil, false) end
 end
 
 Toggles.AutoChop:OnChanged(function()
