@@ -306,7 +306,6 @@ local Tabs = {
 	Movement = Window:AddTab("Movement", "move"),
 	Farming = Window:AddTab("Farming", "pickaxe"),
 	Teleport = Window:AddTab("Teleport", "map-pin"),
-	["Boss Farm"] = Window:AddTab("Boss Farm", "skull"),
 	Visuals = Window:AddTab("Visuals", "eye"),
 	["Fun Box"] = Window:AddTab("Fun Box", "gamepad"),
 	["UI Settings"] = Window:AddTab("UI Settings", "settings"),
@@ -3037,182 +3036,7 @@ Options.WaypointList:OnChanged(function()
 	end
 end)
 
--- ==========================================
--- BOSS FARM
--- ==========================================
-local BossFarmLeft = Tabs["Boss Farm"]:AddLeftGroupbox("Boss ESP", "eye")
-local BossFarmRight = Tabs["Boss Farm"]:AddRightGroupbox("Settings", "sliders-horizontal")
-local BossFarmTools = Tabs["Boss Farm"]:AddRightGroupbox("Tools", "wrench")
 
-BossFarmTools:AddButton({
-	Text = "DarkSteel Farm",
-	Func = function()
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
-		local locations = {
-			Vector3.new(1682, 27, 2292), -- 4. obs
-			Vector3.new(1654, 35, 2313), -- 1 Titan
-			Vector3.new(1600, 35, 2309), -- 2 Yan
-			Vector3.new(1604, 35, 2328),  -- 3 KÃ¶ÅŸe 
-			Vector3.new(1611, 25, 2336), -- 4 Arka
-			Vector3.new(1623, 27, 2328), -- 1. obs
-			Vector3.new(1628, 23, 2312), -- ara sol
-			Vector3.new(1620, 27, 2294), -- 2. obs
-			Vector3.new(1654, 23, 2311), -- ara orta
-			Vector3.new(1681, 27, 2329), -- 3. obs
-			Vector3.new(1679, 23, 2312) -- ara saÄŸ
-		}
-
-		local currentLocationIndex = 1
-		local stayAtLocation = false
-		local ScreenGui = nil
-		local connection = nil
-
-		local function cleanup()
-			if ScreenGui then
-				ScreenGui:Destroy()
-				ScreenGui = nil
-			end
-			if connection then
-				connection:Disconnect()
-				connection = nil
-			end
-			stayAtLocation = false
-		end
-
-		ScreenGui = Instance.new("ScreenGui")
-		ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-
-		local AutoTitanButton = Instance.new("TextButton")
-		AutoTitanButton.Size = UDim2.new(0, 200, 0, 50)
-		AutoTitanButton.Position = UDim2.new(0.5, 50, 0.75, 0)
-		AutoTitanButton.Text = "Auto Titan"
-		AutoTitanButton.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-		AutoTitanButton.TextColor3 = Color3.new(1, 1, 1)
-		AutoTitanButton.Font = Enum.Font.SourceSansBold
-		AutoTitanButton.TextSize = 20
-		AutoTitanButton.Parent = ScreenGui
-
-		local StopButton = Instance.new("TextButton")
-		StopButton.Size = UDim2.new(0, 200, 0, 50)
-		StopButton.Position = UDim2.new(0.5, 50, 0.85, 0)
-		StopButton.Text = "Stop"
-		StopButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-		StopButton.TextColor3 = Color3.new(1, 1, 1)
-		StopButton.Font = Enum.Font.SourceSansBold
-		StopButton.TextSize = 20
-		StopButton.Parent = ScreenGui
-
-		connection = game:GetService("RunService").Heartbeat:Connect(function()
-			if stayAtLocation and HumanoidRootPart then
-				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
-			end
-		end)
-
-		AutoTitanButton.MouseButton1Click:Connect(function()
-			currentLocationIndex = currentLocationIndex + 1
-			if currentLocationIndex > #locations then
-				currentLocationIndex = 1
-			end
-
-			if HumanoidRootPart then
-				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
-				stayAtLocation = true
-			end
-		end)
-
-		StopButton.MouseButton1Click:Connect(function()
-			cleanup()
-		end)
-
-		Library:Notify({ Title = "DarkSteel Farm", Description = "Started!", Time = 2 })
-	end,
-})
-
-BossFarmTools:AddButton({
-	Text = "Adamantite Farm",
-	Func = function()
-		local Players = game:GetService("Players")
-		local LocalPlayer = Players.LocalPlayer
-		local Character = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
-		local HumanoidRootPart = Character:WaitForChild("HumanoidRootPart")
-
-		local locations = {
-			Vector3.new(-1670.36572265625, 520.3575439453125, 7286.283203125),
-			Vector3.new(-1734.2337646484375, 529.2215576171875, 7296.73388671875),
-			Vector3.new(-1705.7255859375, 520.3575439453125, 7342.8310546875),
-			Vector3.new(-1792.862548828125, 519.5882568359375, 7286.28271484375),
-			Vector3.new(-1757.49462890625, 519.5882568359375, 7237.10498046875)
-		}
-
-		local currentLocationIndex = 1
-		local stayAtLocation = false
-		local ScreenGui = nil
-		local connection = nil
-
-		local function cleanup()
-			if ScreenGui then
-				ScreenGui:Destroy()
-				ScreenGui = nil
-			end
-			if connection then
-				connection:Disconnect()
-				connection = nil
-			end
-			stayAtLocation = false
-		end
-
-		ScreenGui = Instance.new("ScreenGui")
-		ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
-
-		local AutoSamuraiButton = Instance.new("TextButton")
-		AutoSamuraiButton.Size = UDim2.new(0, 200, 0, 50)
-		AutoSamuraiButton.Position = UDim2.new(0.5, -250, 0.75, 0)
-		AutoSamuraiButton.Text = "Auto Samurai"
-		AutoSamuraiButton.BackgroundColor3 = Color3.fromRGB(80, 0, 0)
-		AutoSamuraiButton.TextColor3 = Color3.new(1, 1, 1)
-		AutoSamuraiButton.Font = Enum.Font.SourceSansBold
-		AutoSamuraiButton.TextSize = 20
-		AutoSamuraiButton.Parent = ScreenGui
-
-		local StopButton = Instance.new("TextButton")
-		StopButton.Size = UDim2.new(0, 200, 0, 50)
-		StopButton.Position = UDim2.new(0.5, -250, 0.85, 0)
-		StopButton.Text = "Stop"
-		StopButton.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-		StopButton.TextColor3 = Color3.new(1, 1, 1)
-		StopButton.Font = Enum.Font.SourceSansBold
-		StopButton.TextSize = 20
-		StopButton.Parent = ScreenGui
-
-		connection = game:GetService("RunService").Heartbeat:Connect(function()
-			if stayAtLocation and HumanoidRootPart then
-				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
-			end
-		end)
-
-		AutoSamuraiButton.MouseButton1Click:Connect(function()
-			currentLocationIndex = currentLocationIndex + 1
-			if currentLocationIndex > #locations then
-				currentLocationIndex = 1
-			end
-
-			if HumanoidRootPart then
-				HumanoidRootPart.CFrame = CFrame.new(locations[currentLocationIndex])
-				stayAtLocation = true
-			end
-		end)
-
-		StopButton.MouseButton1Click:Connect(function()
-			cleanup()
-		end)
-
-		Library:Notify({ Title = "Adamantite Farm", Description = "Started!", Time = 2 })
-	end,
-})
 
 -- ==========================================
 -- VISUALS
@@ -3487,37 +3311,20 @@ local espObjects = {}
 local hasDrawing = (typeof(Drawing) ~= "nil")
 
 local function clearESP()
-	for player, data in pairs(espObjects) do
-		if data then
-			if data.Highlight then
-				data.Highlight:Destroy()
-			end
-			if data.Billboard then
-				data.Billboard:Destroy()
-			end
-			if data.Box then
-				data.Box:Remove()
-			end
-			if data.Tracer then
-				data.Tracer:Remove()
-			end
-			if data.HealthBar then
-				data.HealthBar:Remove()
+	for _, obj in pairs(espObjects) do
+		if typeof(obj) == "Instance" then
+			obj:Destroy()
+		elseif typeof(obj) == "table" then
+			for _, child in pairs(obj) do
+				if typeof(child) == "Instance" then
+					child:Destroy()
+				else
+					pcall(function() child:Remove() end)
+				end
 			end
 		end
 	end
 	table.clear(espObjects)
-end
-
-local function getHealthColor(health, maxHealth)
-	local ratio = health / maxHealth
-	if ratio > 0.75 then
-		return Color3.fromRGB(0, 255, 0) -- Green
-	elseif ratio > 0.35 then
-		return Color3.fromRGB(255, 255, 0) -- Yellow
-	else
-		return Color3.fromRGB(255, 0, 0) -- Red
-	end
 end
 
 local function createESP(player)
@@ -3527,21 +3334,21 @@ local function createESP(player)
 	end
 	local root = character:FindFirstChild("HumanoidRootPart")
 	local hum = character:FindFirstChildOfClass("Humanoid")
-	local head = character:FindFirstChild("Head")
 	if not root or not hum then
 		return
 	end
 
-	local highlight = Instance.new("Highlight")
-	highlight.FillTransparency = 0.8
-	highlight.OutlineTransparency = 0
-	highlight.Adornee = character
-	highlight.Parent = character
-	highlight.Enabled = false
+	local box2d = nil
+	if hasDrawing then
+		box2d = Drawing.new("Square")
+		box2d.Color = Color3.fromRGB(192, 192, 192)
+		box2d.Thickness = 1.5
+		box2d.Filled = false
+		box2d.Visible = false
+	end
 
 	local billboard = Instance.new("BillboardGui")
-	billboard.Size = UDim2.fromOffset(150, 60)
-	billboard.StudsOffset = Vector3.new(0, 4, 0)
+	billboard.Size = UDim2.fromOffset(120, 40)
 	billboard.AlwaysOnTop = true
 	billboard.Adornee = root
 	billboard.Parent = root
@@ -3550,125 +3357,82 @@ local function createESP(player)
 	label.Size = UDim2.fromScale(1, 1)
 	label.BackgroundTransparency = 1
 	label.TextColor3 = Color3.new(1, 1, 1)
-	label.TextStrokeTransparency = 0.3
-	label.TextStrokeColor3 = Color3.new(0, 0, 0)
+	label.TextStrokeTransparency = 0.5
 	label.Font = Enum.Font.GothamBold
-	label.TextSize = 15
-	label.TextYAlignment = Enum.TextYAlignment.Top
+	label.TextSize = 14
 	label.Parent = billboard
 
-	local box = nil
-	local healthBar = nil
 	local tracer = nil
 	if hasDrawing then
-		box = Drawing.new("Square")
-		box.Thickness = 2
-		box.Filled = false
-		box.Visible = false
-
-		healthBar = Drawing.new("Square")
-		healthBar.Filled = true
-		healthBar.Visible = false
-
 		tracer = Drawing.new("Line")
+		tracer.Color = Color3.fromRGB(192, 192, 192)
 		tracer.Thickness = 1.5
-		tracer.Transparency = 0.8
+		tracer.Transparency = 1
 		tracer.Visible = false
 	end
 
-	espObjects[player] = {
-		Highlight = highlight,
-		Billboard = billboard,
-		Label = label,
-		Box = box,
-		HealthBar = healthBar,
-		Tracer = tracer
-	}
+	espObjects[player] = { box2d, billboard, label, tracer }
 
 	local function update()
-		local data = espObjects[player]
-		if not data then
-			return
-		end
 		local myRoot = getRootPart()
-		if not myRoot or not character.Parent or not root.Parent then
-			if data.Box then data.Box.Visible = false end
-			if data.HealthBar then data.HealthBar.Visible = false end
-			if data.Tracer then data.Tracer.Visible = false end
-			data.Highlight.Enabled = false
-			data.Billboard.Enabled = false
+		if not myRoot or not character.Parent then
+			if tracer then tracer.Visible = false end
+			if box2d then box2d.Visible = false end
 			return
 		end
-
 		local dist = (root.Position - myRoot.Position).Magnitude
 		local shouldShow = dist <= Options.ESPDistance.Value and Toggles.PlayerESP.Value
-		local healthColor = getHealthColor(hum.Health, hum.MaxHealth)
+		if box2d then
+			if shouldShow and Toggles.ShowBox and Toggles.ShowBox.Value then
+				local screenPos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(root.Position)
+				if onScreen then
+					local head = character:FindFirstChild("Head")
+					local topPos = head and head.Position + Vector3.new(0, 0.5, 0) or root.Position + Vector3.new(0, 3, 0)
+					local bottomPos = head and head.Position - Vector3.new(0, 6.5, 0) or root.Position - Vector3.new(0, 3.5, 0)
+					
+					local topCoords = workspace.CurrentCamera:WorldToViewportPoint(topPos)
+					local bottomCoords = workspace.CurrentCamera:WorldToViewportPoint(bottomPos)
+					
+					local height = math.abs(topCoords.Y - bottomCoords.Y)
+					local width = height * 0.6
+					
+					box2d.Position = Vector2.new(screenPos.X - width / 2, topCoords.Y)
+					box2d.Size = Vector2.new(width, height)
+					box2d.Visible = true
+				else
+					box2d.Visible = false
+				end
+			else
+				box2d.Visible = false
+			end
+		end
 
-		data.Highlight.Enabled = shouldShow
-		data.Highlight.FillColor = healthColor
-		data.Highlight.OutlineColor = healthColor
-
-		data.Billboard.Enabled = shouldShow
+		billboard.Enabled = shouldShow
 		local text = player.Name
 		if Toggles.ShowDistance.Value then
-			text ..= string.format("\n[%.0fm]", dist)
+			text ..= string.format("\n%.0fm", dist)
 		end
 		if Toggles.ShowHealth.Value then
-			text ..= string.format("\nHP: %.0f/%.0f", hum.Health, hum.MaxHealth)
+			text ..= string.format("\nHP: %.0f", hum.Health)
 		end
-		data.Label.Text = text
-		data.Label.TextColor3 = healthColor
+		label.Text = text
 
-		if hasDrawing then
-			if data.Box and Toggles.ShowBox and Toggles.ShowBox.Value and shouldShow then
-				local headPos = head and head.Position or root.Position + Vector3.new(0, 2.5, 0)
-				local feetPos = root.Position - Vector3.new(0, 3, 0)
-				local topPos, onScreen1 = workspace.CurrentCamera:WorldToViewportPoint(headPos + Vector3.new(0, 0.5, 0))
-				local bottomPos, onScreen2 = workspace.CurrentCamera:WorldToViewportPoint(feetPos)
-				if onScreen1 and onScreen2 and topPos.Z > 0 and bottomPos.Z > 0 then
-					local height = math.abs(topPos.Y - bottomPos.Y)
-					local width = height * 0.65
-					local centerX = (topPos.X + bottomPos.X) / 2
-
-					data.Box.Color = healthColor
-					data.Box.Position = Vector2.new(centerX - width / 2, topPos.Y)
-					data.Box.Size = Vector2.new(width, height)
-					data.Box.Visible = true
-
-					if data.HealthBar then
-						local healthRatio = hum.Health / hum.MaxHealth
-						data.HealthBar.Color = healthColor
-						data.HealthBar.Position = Vector2.new(centerX - width / 2 - 6, topPos.Y)
-						data.HealthBar.Size = Vector2.new(3, height * healthRatio)
-						data.HealthBar.Visible = true
-					end
-				else
-					data.Box.Visible = false
-					if data.HealthBar then data.HealthBar.Visible = false end
-				end
-			elseif data.Box then
-				data.Box.Visible = false
-				if data.HealthBar then data.HealthBar.Visible = false end
+		if tracer and Toggles.ShowTracers.Value then
+			local pos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(root.Position)
+			if onScreen then
+				tracer.From = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y)
+				tracer.To = Vector2.new(pos.X, pos.Y)
+				tracer.Visible = true
+			else
+				tracer.Visible = false
 			end
-
-			if data.Tracer and Toggles.ShowTracers and Toggles.ShowTracers.Value and shouldShow then
-				local pos, onScreen = workspace.CurrentCamera:WorldToViewportPoint(root.Position)
-				if onScreen and pos.Z > 0 then
-					data.Tracer.Color = healthColor
-					data.Tracer.From = Vector2.new(workspace.CurrentCamera.ViewportSize.X / 2, workspace.CurrentCamera.ViewportSize.Y)
-					data.Tracer.To = Vector2.new(pos.X, pos.Y)
-					data.Tracer.Visible = true
-				else
-					data.Tracer.Visible = false
-				end
-			elseif data.Tracer then
-				data.Tracer.Visible = false
-			end
+		elseif tracer then
+			tracer.Visible = false
 		end
 	end
 
 	update()
-	track("ESP_" .. player.Name, RunService.Heartbeat:Connect(update))
+	track("ESP_" .. player.Name, RunService.RenderStepped:Connect(update))
 end
 
 Toggles.PlayerESP:OnChanged(function()
@@ -3689,25 +3453,13 @@ Toggles.PlayerESP:OnChanged(function()
 	track("ESP_PlayerAdded", Players.PlayerAdded:Connect(function(player)
 		if Toggles.PlayerESP.Value then
 			player.CharacterAdded:Connect(function()
-				task.wait(0.5)
+				task.wait(1)
 				if Toggles.PlayerESP.Value then
 					createESP(player)
 				end
 			end)
 		end
 	end))
-end)
-
-Players.PlayerRemoving:Connect(function(player)
-	if espObjects[player] then
-		local data = espObjects[player]
-		if data.Highlight then data.Highlight:Destroy() end
-		if data.Billboard then data.Billboard:Destroy() end
-		if data.Box then data.Box:Remove() end
-		if data.Tracer then data.Tracer:Remove() end
-		if data.HealthBar then data.HealthBar:Remove() end
-		espObjects[player] = nil
-	end
 end)
 
 
@@ -4480,15 +4232,6 @@ ThemeManager:ApplyToTab(Tabs["UI Settings"])
 SaveManager:LoadAutoloadConfig()
 
 Library:OnUnload(function()
-	-- Clean up Boss Farm ScreenGuis
-	pcall(function()
-		for _, gui in ipairs(LocalPlayer.PlayerGui:GetChildren()) do
-			if gui:IsA("ScreenGui") and (gui:FindFirstChild("Auto Titan") or gui:FindFirstChild("Auto Samurai")) then
-				gui:Destroy()
-			end
-		end
-	end)
-	
 	if Toggles.DesyncToggle and Toggles.DesyncToggle.Value then
 		Toggles.DesyncToggle:SetValue(false)
 	end
