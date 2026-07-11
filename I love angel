@@ -307,7 +307,6 @@ local Tabs = {
 	Farming = Window:AddTab("Farming", "pickaxe"),
 	Teleport = Window:AddTab("Teleport", "map-pin"),
 	Visuals = Window:AddTab("Visuals", "eye"),
-	["Boss Farm"] = Window:AddTab("Boss Farm", "skull"),
 	["Fun Box"] = Window:AddTab("Fun Box", "gamepad"),
 	["UI Settings"] = Window:AddTab("UI Settings", "settings"),
 }
@@ -3501,14 +3500,7 @@ Toggles.InfiniteZoom:OnChanged(function()
 		LocalPlayer.CameraMinZoomDistance = 0.5
 	end
 end)
-
---- ==========================================
---- BOSS FARM
---- ==========================================
-local BossFarmLeft = Tabs["Boss Farm"]:AddLeftGroupbox("Boss Farm", "skull")
-local BossFarmRight = Tabs["Boss Farm"]:AddRightGroupbox("Settings", "sliders-horizontal")
-local BossFarmTools = Tabs["Boss Farm"]:AddRightGroupbox("Tools", "wrench")
-
+ 
 -- ==========================================
 -- FUN BOX
 -- ==========================================
