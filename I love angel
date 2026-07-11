@@ -3045,7 +3045,7 @@ local BossFarmRight = Tabs["Boss Farm"]:AddRightGroupbox("Settings", "sliders-ho
 local BossFarmTools = Tabs["Boss Farm"]:AddRightGroupbox("Tools", "wrench")
 
 BossFarmTools:AddButton({
-	Title = "DarkSteel Farm",
+	Text = "DarkSteel Farm",
 	Func = function()
 		local Players = game:GetService("Players")
 		local LocalPlayer = Players.LocalPlayer
@@ -3129,11 +3129,11 @@ BossFarmTools:AddButton({
 		end)
 
 		Library:Notify({ Title = "DarkSteel Farm", Description = "Started!", Time = 2 })
-	end
+	end,
 })
 
 BossFarmTools:AddButton({
-	Title = "Adamantite Farm",
+	Text = "Adamantite Farm",
 	Func = function()
 		local Players = game:GetService("Players")
 		local LocalPlayer = Players.LocalPlayer
@@ -3211,7 +3211,7 @@ BossFarmTools:AddButton({
 		end)
 
 		Library:Notify({ Title = "Adamantite Farm", Description = "Started!", Time = 2 })
-	end
+	end,
 })
 
 -- ==========================================
@@ -4480,6 +4480,15 @@ ThemeManager:ApplyToTab(Tabs["UI Settings"])
 SaveManager:LoadAutoloadConfig()
 
 Library:OnUnload(function()
+	-- Clean up Boss Farm ScreenGuis
+	pcall(function()
+		for _, gui in ipairs(LocalPlayer.PlayerGui:GetChildren()) do
+			if gui:IsA("ScreenGui") and (gui:FindFirstChild("Auto Titan") or gui:FindFirstChild("Auto Samurai")) then
+				gui:Destroy()
+			end
+		end
+	end)
+	
 	if Toggles.DesyncToggle and Toggles.DesyncToggle.Value then
 		Toggles.DesyncToggle:SetValue(false)
 	end
